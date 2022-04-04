@@ -1,0 +1,19 @@
+#sidebar {
+    color: #D9AB16;
+    background: #1A658F;
+}
+
+#sidebar h2 {
+    color: #FFFFFF;
+    background-color: #4096B8;
+}
+
+#sidebar a {
+    color: #e9f3e7;
+}
+
+#sidebar a:hover {
+    background-color: #3F4548;
+    color: #FFFFFF;
+} 
+

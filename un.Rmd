@@ -1,0 +1,390 @@
+---
+title: "Etude Kalamon Consulting - User apps & Selfcare dans les assurances"
+author: "Julien Cantat - Kalamon Consulting"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: kate 
+    css : style.css
+---
+
+```{r, include=FALSE}
+## Global options
+knitr::opts_chunk$set(cache = TRUE, echo=FALSE)
+library(ggplot2)
+library(esquisse) 
+library(readxl)
+library(dplyr)
+library(plotly)
+library(knitr)
+library(htmltools)
+library(IRdisplay)
+assur <- read_excel("Benchmark appli assurance.xlsx")
+```
+
+
+<style>
+p {
+    font-size: 16px;
+    line-height: 24px;
+    margin: 0px 0px 12px 0px;
+}
+
+h1, h2, h3, h4, h5, h6, legend {
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    color: #1A658F;
+} 
+body {
+text-align: justify; 
+}
+</style>
+
+# 1. Présentation de l'étude 
+
+## 1.1 Motivation & Objectifs
+
+### A. Constats de départ
+
+Le secteur des assurances est resté longtemps hermétique au digital. Alors que de nombreux secteurs effectuaient leur révolution numérique, les services assurantiels sont longtemps restées centrés autour d'une relation physique entre un agent ou un courtier et son client, tant pour la prospection commerciale que pour la prestation.  
+Cependant, l'arrivée ces dernières années de nouveaux acteurs sur le marché a bousculé ce schéma qui semblait immuable. Les assurtech, startups de l'assurance 100% digitalisées, ont réussi à attaquer des segments de marché grâce à un modèle innovant. Ces assureurs sont souvent organisés autour d'une application (web ou mobile) unique, et qui permet une autonomie totale pour l'assuré, de la souscription du contrat jusqu'à sa résiliation, en passant par les avenants ou les demandes de prestation.  Ces assurtech ont connu un certain succès car leur niveau service permet de pallier certains manquements des assureurs traditionnels, comme la simplicité et la rapidité des démarches.  
+L'arrivée de ces acteurs, capables d’attaquer le marché avec des moyens relativement faibles au regard des CA des monstres sacrés qui dominent le monde de l'assurance, a lancé une véritable course au digital. Les exigences nouvelles des consommateurs ne sont pas forcément simples à concilier avec le poids de la réglementation et des systèmes d'information en place chez les assureurs traditionnels. La place du réseau, pour ceux dont la distribution ne se fait pas en direct, est une autre composante à prendre en compte, car le self-care peut soulager un agent général ou un courtier, comme il peut lui donner l'impression d'une perte de compétence et de relation client en fonction de sa mise en place.  
+Ainsi, si tous les assureurs ne font pas face aux mêmes contraintes, tous s'engagent aujourd'hui sur la voie du self-care. Certains développent une application centralisée permettant au client d'avoir une vision unique de ses contrats & démarches, tandis que d'autres choisissent d'en développer plusieurs en fonction des produits. Pour valoriser leur offre, certains assureurs décident même de mettre à disposition des utilisateurs des applications offrant des services supplémentaires, comme AlcooTel de la MAAF qui permet d'estimer son alcoolémie en fonction de l'heure et de sa consommation d'alcool.  
+
+### B. Objectifs
+
+Le but de cette étude sera donc de faire un état des lieux des applications mises à disposition des assurés, et de voir leur réception et leur taux de pénétration sur le marché au regard de la taille des assureurs qui les publient. Nous utiliserons comme mesure principale du taux de satisfaction client la note moyenne donnée aux applications sur le Google Play Store, et le nombre de téléchargements comme mesure du taux de pénétration. 
+Nous comparerons ces mesures au chiffre d’affaires, au nombre d'applications utilisateurs et à la typologie des différents acteurs pour valider ou invalider des hypothèses, et éventuellement mettre en lumière des phénomènes non mentionnés dans nos hypothèses de départ. 
+
+### C. Hypothèses de départ 
+
+Dans cette étude, nous nous attendons à constater que :  
+
+- Les assurtech possèdent les moyennes de notes les plus élevées grâce à un parcours client basé originellement basé le self-care comme valeur différenciante. 
+
+- Les assureurs traditionnels avec un chiffre d’affaires important sont mieux notés et pénètrent mieux le marché que ceux à faible ou moyen chiffre d'affaire car ils disposent de budget plus élevés pour développer des applications mobiles, et évidemment d’un portefeuille plus large. 
+
+- Les assureurs proposant plusieurs applications ont des notes moyennes plus basses car les clients préfèrent utiliser un canal unique, et car les applications de service supplémentaires répondent rarement à un véritable besoin. 
+
+- Les assureurs ayant des applications mieux notées pénètrent mieux le marché.
+
+- En dehors des assutechs, on s'attend à trouver une note moyenne relativement faible, témoignant d'un secteur encore en cours de digitalisation.
+
+## 1.2 Périmètre & Définitions
+
+### A. Définitions
+
+Dans la présente étude, on utilisera les définitions ci-après : 
+
+- Généraliste : une compagnie d'assurance, à but lucratif ou non, commercialisant la plupart des produits d'assurance présents sur le marché (IARD, Prévoyance, épargne...)
+
+- Prévoyance : une compagnie d'assurance, à but lucratif ou non, commercialisant principalement des produits de prévoyance et d'épargne. 
+
+- Startup : désigne les assurtech. 
+
+- Téléchargements : le nombre de téléchargements de l'application principal d'un assureur sur le Google Play Store. Attention, le nombre exact n'est jamais dévoilé : il s'agit toujours d'une fourchette.
+
+- Note moyenne : la note moyenne de l'ensemble des applications utilisateur d'un assureur sur le Google Play Store, ou à défaut sur l'Apple Store. Il s'agit d'une note sur 5. 
+
+- Chiffre d'affaires : le chiffre d'affaires en millions d'euros réalisé sur le sol français via des activités de commercialisation ou d'émission de contrats d'assurance et de réassurance par une société donnée, dans la mesure de la disponibilité de cette valeur. Il peut être une estimation pour les sociétés ne communiquant pas leur CA. 
+
+### Périmètre d'étude 
+
+Pour réaliser cette étude, nous avons présélectionné 39 acteurs majeurs et représentatifs du secteur assurantiel français (courtiers, généralistes, startups, prévoyance) tant en termes de produits proposés que de part de marché ou de structure juridique. Nous aurions éliminé ceux n'ayant pas d'application mobile à destination des usagers, mais cela n'était le cas pour aucun d'entre eux.  
+
+Après avoir noté le nombre d'applications à destination des utilisateurs, nous avons relevé la note de chacune des applications pour obtenir une moyenne par assureur, et nous avons également noté le nombre de téléchargements de l'application la plus téléchargée.  
+Nous avons ensuite ajouté quelques informations relatives au profil de l'assureur (type d'assureur, chiffre d’affaires) pour obtenir le jeu de données ci-dessous qui constitue notre base de travail.
+
+
+```{r, echo = FALSE}
+library(rmarkdown)
+paged_table(assur)
+assur$`Téléchargements (en k)` <- factor(assur$`Téléchargements (en k)`, levels = c("5-10","10-50","50-100","100-500","500-1000","5000-10000"))
+```
+
+
+# 2. Phénomènes observés 
+
+## 2.1 Présentation du groupe d'étude
+
+```{r, echo=FALSE}
+ggplot(assur) +
+  aes(x = Type) +
+  geom_bar(fill = "#1A658F") +
+  labs(
+    y = "Total",
+    title = "Répartition du groupe test par type de structure"
+  ) +
+  theme_minimal() 
+```
+
+
+Le groupe d'étude est composé de 40 acteurs du secteur de l'assurance dont : 
+
+ - 21 généralistes 
+ - 10 assureurs spécialisés en prévoyance
+ - 4 courtiers
+ - 3 startups 
+ - 1 spécialiste de l'assurance automobile 
+ 
+### A. Applications
+
+```{r, echo=FALSE}
+ggplot(assur) +
+  aes(x = Applications, fill = Type) +
+  geom_histogram(bins = 5L) +
+  scale_fill_hue(direction = 1) +
+  labs(x = "Nombre d'applications", y = "Total", title = "Nombre d'apllications clients par assureur", 
+       fill = "Type d'assureur") +
+  theme_minimal() -> p1
+ggplotly(p1) ->p1 
+p1
+```
+
+
+La grande majorité des acteurs étudiés met 1 à 2 applications à disposition de ses clients. Néanmoins, certains généralistes - du fait de leur taille et/ou du nombre plus importants de produits commercialisés - ont publié jusqu'à 5 (Groupama) applications sur le Play Store. 
+
+La moyenne d'applications proposées est de 1,8
+
+### B. Chiffre d'affaires
+
+```{r, echo=FALSE}
+ggplot(assur) +
+ aes(x = "", y = `Chiffre d'affaire (en M\200)`) +
+ geom_boxplot(fill = "#1A658F") +
+ labs(x = "groupe test", 
+ title = "Répartition des chiffres d'affaires dans le groupe test") +
+ theme_minimal() -> c18
+ggplotly(c18) 
+```
+
+On observe une grande disparité de chiffres d’affaires au sein du groupe test, avec des valeurs allant de 10 millions d'euros à 27,3 Milliards. La valeur médiane
+
+```{r, echo=FALSE}
+assur %>%
+ filter(Type %in% c("Généraliste", "Prévoyance")) %>%
+ ggplot() +
+ aes(x = Type, y = `Chiffre d'affaire (en M\200)`, fill = Type) +
+ geom_boxplot() +
+ scale_fill_hue(direction = 1) +
+ labs(x = "Type d'assureur", title = "Répartition des chiffres d'affaires") +
+ theme_minimal() +
+ theme(legend.position = "none")->p5
+ggplotly(p5) ->p5
+p5
+
+```
+
+Si on décompose par groupe, les deux groupes ayant les chiffres d'affaires médians les plus élevés sont les assureurs de Prévoyance (4,1 Milliards de moyenne, 2,8 Mds de Médiane) les Généralistes (5,9 Mds de moyenne, 2,2 Mds de médiane), parmis lesquels ont retrouve tous les gros acteurs historiques du marché.
+
+### 
+
+```{r, echo=FALSE}
+assur %>%
+ filter(Type %in% c("Startup", "Courtier")) %>%
+ ggplot() +
+ aes(x = Type, y = `Chiffre d'affaire (en M\200)`, fill = Type) +
+ geom_boxplot() +
+ scale_fill_viridis_d(option = "viridis", 
+ direction = 1) +
+ labs(x = "Type d'assureur", title = "Répartition des chiffres d'affaires") +
+ theme_minimal() +
+ theme(legend.position = "none") -> p4
+ggplotly(p4) ->p4
+p4
+```
+
+Logiquement, les CA moyens de startups (45 millions) et des courtiers (340 millions) sont sans communes mesures. 
+
+### C. Téléchargements 
+
+```{r}
+results_dir <- 'results'
+if(!dir.exists(results_dir)) dir.create(results_dir)
+
+ggplot(assur) +
+ aes(x = `Téléchargements (en k)`) +
+ geom_bar(fill = "#1A658F") +
+ labs(y = "Total", title = "Nombre de téléchargements des applications du groupe test") +
+ theme_minimal() -> dark
+ggplotly(dark) ->p
+ggplotly(p)
+```
+
+
+Une grande partie des applications ont été téléchargées entre 100 et 500 000 fois, et les plus performantes plus de 500 000 fois. La performance de l'application Crédit Mutuelle (plus de 5 millions de téléchargements) est à relativiser car il s'agit d'une application combinant les services de banque et d'assurance. On observe une grande disparité dans le téléchargement des applications, certaines ayant été téléchargées moins de 50 000 fois.
+
+
+<iframe scrolling='no' seamless='seamless' style='border:none'
+src='dep.html' width='800' height='500'></iframe>
+
+Au sein des différents groupes, la répartition est très hétérogène, puisqu'on observe quasiment tous les niveaux de pénétration dans chaque groupe. Le seul groupe qui se démarque est celui des assurtech (100-500 000 téléchargements pour l'ensemble des acteurs du groupe).
+
+### D. Notes
+
+```{r}
+
+ggplot(assur) +
+ aes(x = "", y = `Note moyenne`) +
+ geom_boxplot(fill = "#185F87") +
+ labs(x = "Groupe test", 
+ title = "Répartition des notes dans le groupe test") +
+ theme_minimal() -> deli 
+ggplotly(deli)->deli
+htmlwidgets::saveWidget(deli, 
+                        file.path(results_dir, 'deli.html'))
+
+```
+
+<iframe scrolling='no' seamless='seamless' style='border:none'
+src='results\deli.html' width='800' height='500'></iframe>
+
+Encore un fois, on observe une grande hétérogénéité au sein du groupe test. Les moyennes de notes vont de 1,5 à 4,7, la médiane et la moyenne pondérée sont à 3,2. 
+La moyenne n'est pas forcément choquante à première vue, mais il s'agit d'une très mauvaise note pour un groupe d'aussi grosses entreprises. Une étude intitulée ["User Feedback in the AppStore: An Empirical Study"](https://www.researchgate.net/publication/260156697_User_Feedback_in_the_AppStore_An_Empirical_Study) a ainsi montré que seules les notes au dessus de 4 peuvent être considérées comme bonnes, puisque les notes allant de 1 à 3 sont à 95% accompagnées d'une commentaire décrivant une expérience utilisateur négative. Selon ce critère, seuls 12 des 39 membres de notre étude ont des applications de qualité.  
+
+A titre d'exemple, l'application SNCF Connect qui avait déclenché un tollé à sa sortie pour la médiocrité de son expérience utilisateur et sa miriade de bugs est notée à 3,6 et serait donc en 15e position sur 39 dans notre étude. 14 des membres de notre étude ont une note moyenne entre 1,5 et 2,5. A ce niveau de note, il devient difficile de trouver un élément de comparaison, nous avons d'ailleurs échoué à trouver un cluster d'applications ayant des notes aussi faibles. 
+
+```{r}
+
+assur %>%
+ filter(!(Type %in% "Auto")) %>%
+ ggplot() +
+ aes(x = Type, y = `Note moyenne`, fill = Type) +
+ geom_boxplot() +
+ scale_fill_hue(direction = 1) +
+ labs(x = "Type d'assureur", title = "Répartition des notes par type d'assureur") +
+ theme_minimal() +
+ theme(legend.position = "none") -> BOOKER
+ggplotly(BOOKER)-> suns 
+
+htmlwidgets::saveWidget(suns, 
+                        file.path(results_dir, 'suns.html'))
+
+```
+
+<iframe scrolling='no' seamless='seamless' style='border:none'
+src='results\suns.html' width='800' height='500'></iframe>
+
+
+On observe également de grandes disparités entre nos différents groupes. Sans suprises, les startups sont toutes au dela de 4. Les notes dans la prévoyance sont extrêment avec une moyenne à 2,5 et une note maximale à 3,8. Les courtiers ont des notes très faibles, ce qui est probablement en partie lié à la nature de l'activité de courtage (distribution), qui rend plus difficile l'instauration du self-care. Enfin le groupe le plus hétérogène est celui des généralistes, qui comporte à la fois la meilleure et la plus mauvaise note, et où la médiane est à 3,5. 
+
+Nous aurons l'occasion d'étudier ces différents groupes en détail dans la suite de cette étude. 
+
+
+
+## 2.2 Principales observations
+
+### A. Notes & Chiffre d'affaires
+
+```{r}
+ggplot(assur) +
+  aes(
+    x = `Chiffre d'affaire (en M\200)`,
+    y = `Note moyenne`,
+    colour = Type,
+    label = Assureur
+  ) +
+  geom_jitter(shape = "circle", size = 2) +
+  scale_color_hue(direction = 1) +
+  labs(
+    title = "Note moyenne en fonction du chiffre d'affaire de l'assureur"
+  ) +
+  theme_minimal()-> Ayton
+ggplotly(Ayton)-> ayton 
+
+htmlwidgets::saveWidget(ayton, 
+                        file.path(results_dir, 'ayton.html'))
+```
+
+<iframe scrolling='no' seamless='seamless' style='border:none'
+src='results\ayton.html' width='800' height='500'></iframe> 
+
+Le simple tracé de ce graphique semble, après une première analyse visuelle, indiquer une faible corrélation positive entre le chiffre d'affaire et la note moyenne. Ainsi, un seul assureur possédant un CA plus de 10 Mds€ a une note en dessous de 3. Toutefois, certains sous-groupes comme la prévoyance (*double cliquez sur le mot "Prévoyance" dans la légende pour isoler le sous-groupe*) semblent évoluer de façon différente, ce qui démontre la nécessité d'établir des sous-groupes d'étude pour la suite de notre étude.
+
+
+```{r, echo=FALSE, warning=FALSE}
+library(car)
+scatterplot(`Note moyenne`~`Chiffre d'affaire (en M\200)`, data=assur) 
+```
+
+On peut confirmer notre première impression graphique en traçant une droite de régression linéaire : il y a bien une corrélation positive mais faible, comme l'indiquent la faible pente et l'écart fort entre les deux lignes extérieures indiquant l'intervalle de confiance. L'évolution de l'intervalle de confiance semble par ailleurs indiquer une corrélation négative pour le groupe allant jusqu'à 7,5 Mds€.  
+
+### B. Notes & Nombre d'applications
+
+```{r, echo=FALSE, warning=FALSE}
+ggplot(assur) +
+  aes(x = Applications, y = `Note moyenne`, colour = Type, label = Assureur) +
+  geom_point(shape = "circle", size = 2L) +
+  scale_color_viridis_d(option = "viridis", direction = 1) +
+  labs(
+    title = "Nombre d'applications utilisateurs & note moyenne"
+  ) +
+  theme_minimal()-> blop 
+ggplotly(blop)->blip
+
+htmlwidgets::saveWidget(blip, 
+                        file.path(results_dir, 'blip.html'))
+```
+
+<iframe scrolling='no' seamless='seamless' style='border:none'
+src='results\blip.html' width='800' height='500'></iframe> 
+
+On observe à première vue pas de corrélation particulière etre nombre d'applications et note moyenne, si ce n'est que plus le nombre d'applications augmmente, plus la dispersion est faible et les notes ont tendance à se resserrer autour de la médiane du groupe à 3,2. 
+
+```{r,warning=FALSE}
+
+as.character(assur$Applications)->assur$Applications
+ggplot(assur) +
+  aes(
+    x = Applications,
+    y = `Note moyenne`,
+    fill = Applications
+  ) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set1", direction = 1) +
+  labs(
+    title = "Répartition des notes par nombre d'applications"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") -> GME
+ggplotly(GME)->GMED
+
+htmlwidgets::saveWidget(GMED, 
+                        file.path(results_dir, 'GMED.html'))
+as.numeric(assur$Applications)->assur$Applications
+```
+
+<ifram scrolling='no' seamless='seamless' style='border:none'
+src='results\GMED.html' width='800' height='500'></iframe> 
+
+Ces observations sont confirmées : Les assureurs ayant une seule application atteignent des notes plus élevées et plus basses, tandis que ceux à 3 applications ont la médiane la plus élevée. On remarque également que la valeur la plus élevée de chaque groupe N est plus faible que celle du groupe N-1, et que si le groupe à 1 application possède les valeurs les plus élevées, sa médiane est quant à elle d'assez loin la plus faible.  
+
+```{r,warning=FALSE}
+
+as.character(assur$Applications)->assur$Applications
+ggplot(assur) +
+  aes(
+    x = Applications,
+    y = `Note moyenne`,
+    fill = Applications
+  ) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set1", direction = 1) +
+  labs(
+    title = "Répartition des notes par nombre d'applications"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") -> GME
+ggplotly(GME)->GMED
+
+htmlwidgets::saveWidget(GMED, 
+                        file.path(results_dir, 'GMED.html'))
+as.numeric(assur$Applications)->assur$Applications
+```
+
+<iframe scrolling='no' seamless='seamless' style='border:none'
+src='results\GMED.html' width='800' height='500'></iframe> 
+
+Ces observations sont confirmées : Les assureurs ayant une seule application atteignent des notes plus élevées et plus basses, tandis que ceux à 3 applications ont la médiane la plus élevée. On remarque également que la valeur la plus élevée de chaque groupe N est plus faible que celle du groupe N-1, et que si le groupe à 1 application possède les valeurs les plus élevées, sa médiane est quant à elle d'assez loin la plus faible. 
+
+On étudiera plus en détail ce groupe plus loin dans notre étude. 
